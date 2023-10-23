@@ -1,5 +1,5 @@
 export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
+fragment RecommendedProduct on Product {
     id
     title
     handle
@@ -19,11 +19,30 @@ export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       }
     }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+  query RecommendedProducts (
+    $country: CountryCode, 
+    $language: LanguageCode,
+    $first: Int
+    $last: Int
+    $startCursor: String
+    $endCursor: String
+  )
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    products(
+      first: $first,
+      last: $last,
+      before: $startCursor,
+      after: $endCursor,
+      sortKey: UPDATED_AT, 
+      reverse: true) {
       nodes {
         ...RecommendedProduct
+      }
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        endCursor
+        startCursor
       }
     }
   }
