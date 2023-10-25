@@ -5,4 +5,19 @@ import typographyPlugin from '@tailwindcss/typography';
 export default {
   content: ['./app/**/*.{js,ts,jsx,tsx}'],
   plugins: [formsPlugin, typographyPlugin],
+  theme: {
+    fontFamily: {
+      sans: ['Graphik', 'sans-serif'],
+      serif: ['Merriweather', 'serif'],
+    },
+    extend: {
+      spacing: {
+        '128': '32rem',
+        '144': '36rem',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+      }
+    }
+  }
 };

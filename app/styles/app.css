@@ -129,16 +129,6 @@ aside li {
 * components/Header
 * --------------------------------------------------
 */
-.header {
-  align-items: center;
-  background: #fff;
-  display: flex;
-  height: var(--header-height);
-  padding: 0 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
 
 .header-menu-mobile-toggle {
   @media (min-width: 48em) {
@@ -164,13 +154,6 @@ aside li {
 
 .header-menu-item {
   cursor: pointer;
-}
-
-.header-ctas {
-  align-items: center;
-  display: flex;
-  grid-gap: 1rem;
-  margin-left: auto;
 }
 
 /*

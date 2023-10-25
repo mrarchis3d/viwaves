@@ -1,14 +1,28 @@
 import {Await, NavLink, useMatches} from '@remix-run/react';
-import {Suspense} from 'react';
+import {Image} from '@shopify/hydrogen';
+import {Suspense, useState} from 'react';
+import { BiSearch, BiUser } from 'react-icons/bi';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
 
 export function Header({header, isLoggedIn, cart}) {
   const {shop, menu} = header;
   return (
-    <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
-      </NavLink>
-      <HeaderMenu menu={menu} viewport="desktop" />
+    <header className="z-10 w-full sticky top-0 px-4 align-middle h-16 bg-gradient-to-r from-lime-400 to-green-500 flex drop-shadow-md content-center">
+      <div className='sm:w-40 w-20 my-auto origin-center'>
+        <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
+        {shop.brand.logo ?
+            <Image
+              alt={shop.name}
+              width={140}
+              data={shop.brand.logo.image}
+              loading="lazy"
+            />
+        : <strong>{shop.name}</strong>}
+        </NavLink>
+      </div>
+      <div className='my-auto'>
+        <HeaderMenu menu={menu} viewport="desktop" />
+      </div>
       <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
     </header>
   );
@@ -50,7 +64,6 @@ export function HeaderMenu({menu, viewport}) {
             : item.url;
         return (
           <NavLink
-            className="header-menu-item"
             end
             key={item.id}
             onClick={closeAside}
@@ -58,7 +71,7 @@ export function HeaderMenu({menu, viewport}) {
             style={activeLinkStyle}
             to={url}
           >
-            {item.title}
+            <text className='text-lg font-sans text-lime-800 hover:text-lime-100 no-underline'>{item.title}</text>
           </NavLink>
         );
       })}
@@ -68,10 +81,17 @@ export function HeaderMenu({menu, viewport}) {
 
 function HeaderCtas({isLoggedIn, cart}) {
   return (
-    <nav className="header-ctas" role="navigation">
+    <nav className="flex items-center ml-auto space-x-2" role="navigation">
       <HeaderMenuMobileToggle />
       <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        {isLoggedIn ? 'Account' : 'Sign in'}
+        <text className='font-sans
+        inline
+        text-lime-800 
+        hover:text-lime-100 
+        no-underline 
+        text-sm
+        sm:text-lg '> 
+        <BiUser className='inline my-1'/>{isLoggedIn ? 'Account' : 'Sign in'}</text>
       </NavLink>
       <SearchToggle />
       <CartToggle cart={cart} />
@@ -81,18 +101,41 @@ function HeaderCtas({isLoggedIn, cart}) {
 
 function HeaderMenuMobileToggle() {
   return (
-    <a className="header-menu-mobile-toggle" href="#mobile-menu-aside">
+    <a className="text-lg font-sans text-lime-800 header-menu-mobile-toggle m-auto" href="#mobile-menu-aside">
       <h3>☰</h3>
     </a>
   );
 }
 
 function SearchToggle() {
-  return <a href="#search-aside">Search</a>;
+  const [assideOpen, setAsside] = useState(false);
+
+  return <a className='
+  p-1
+  inline
+  hover:no-underline 
+  text-sm
+  sm:text-lg 
+  font-sans 
+  text-lime-800 
+  hover:text-lime-100' href="#search-aside"> <BiSearch className='inline my-1'/>  Search</a>;
 }
 
 function CartBadge({count}) {
-  return <a href="#cart-aside">Cart {count}</a>;
+  return <a className='
+  p-1
+  inline
+  hover:no-underline 
+  text-sm
+  sm:text-lg 
+  font-sans 
+text-lime-800 
+hover:text-lime-100 ' href="#cart-aside">
+  <AiOutlineShoppingCart className='inline my-1'/> Cart 
+  <div className='bg-amber-500 rounded-full inline h-1 w-1 m-1 p-1 relative justify-center items-center text-center' >
+    <text className=' text-lime-100'>{count}</text>
+  </div>
+  </a>;
 }
 
 function CartToggle({cart}) {
@@ -152,6 +195,7 @@ const FALLBACK_HEADER_MENU = {
 
 function activeLinkStyle({isActive, isPending}) {
   return {
+    textDecoration: 'none',
     fontWeight: isActive ? 'bold' : undefined,
     color: isPending ? 'grey' : 'black',
   };
