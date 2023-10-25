@@ -9,6 +9,12 @@ fragment RecommendedProduct on Product {
         currencyCode
       }
     }
+    compareAtPriceRange{
+      maxVariantPrice{
+        amount
+        currencyCode
+      }
+    }
     images(first: 1) {
       nodes {
         id

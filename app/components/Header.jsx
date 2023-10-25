@@ -91,7 +91,7 @@ function HeaderCtas({isLoggedIn, cart}) {
         no-underline 
         text-sm
         sm:text-lg '> 
-        <BiUser className='inline my-1'/>{isLoggedIn ? 'Account' : 'Sign in'}</text>
+        <BiUser className='inline my-1'/>{isLoggedIn ? 'Mi cuenta' : 'Ingresa'}</text>
       </NavLink>
       <SearchToggle />
       <CartToggle cart={cart} />
@@ -118,7 +118,7 @@ function SearchToggle() {
   sm:text-lg 
   font-sans 
   text-lime-800 
-  hover:text-lime-100' href="#search-aside"> <BiSearch className='inline my-1'/>  Search</a>;
+  hover:text-lime-100' href="#search-aside"> <BiSearch className='inline my-1'/>Buscar</a>;
 }
 
 function CartBadge({count}) {
@@ -126,14 +126,16 @@ function CartBadge({count}) {
   p-1
   inline
   hover:no-underline 
-  text-sm
-  sm:text-lg 
+  text-lg
+  sm:text-xl 
   font-sans 
 text-lime-800 
 hover:text-lime-100 ' href="#cart-aside">
-  <AiOutlineShoppingCart className='inline my-1'/> Cart 
-  <div className='bg-amber-500 rounded-full inline h-1 w-1 m-1 p-1 relative justify-center items-center text-center' >
-    <text className=' text-lime-100'>{count}</text>
+  <AiOutlineShoppingCart className='inline my-1'/> 
+  <div className='bg-amber-500 rounded-full inline w-1 m-1 p-1 h-0 relative justify-center items-center text-center' >
+    <text className='
+    text-sm
+    sm:text-lg  text-lime-100'>{count}</text>
   </div>
   </a>;
 }
