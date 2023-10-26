@@ -77,7 +77,6 @@ export function RecommendedProducts ( ) {
         });
       }
     }, [inView, navigate, state, nextPageUrl, hasNextPage]);
-    console.log(nodes)
     return nodes.map((product) => (
       <Link
         key={product.id}

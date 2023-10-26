@@ -11,7 +11,6 @@ export function Footer({menu}) {
 function FooterMenu({menu}) {
   const [root] = useMatches();
   const publicStoreDomain = root?.data?.publicStoreDomain;
-  console.log(menu)
   return (
     <nav className="footer-menu" role="navigation">
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
