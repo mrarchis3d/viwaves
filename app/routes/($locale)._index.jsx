@@ -32,7 +32,7 @@ export default function Homepage() {
       <div className="mt-12 mb-12 flex flex-col md:flex-row justify-center items-center gap-2">
         <FeaturedCollection/>
       </div>
-
+      <h2 className='text-lime-900 text-xl my-8 font-semibold text-center'>NUESTROS PRODUCTOS</h2>
       <RecommendedProducts/>
     </div>
   );
@@ -47,7 +47,6 @@ export function RecommendedProducts ( ) {
         <div className="recommended-products-grid">
           <Pagination connection={products.products}>
             {({ nodes, NextLink, hasNextPage, nextPageUrl, state }) => { 
-              console.log(nodes)
               return(
               <>
                 <ProductsLoadedOnScroll
@@ -78,11 +77,10 @@ export function RecommendedProducts ( ) {
         });
       }
     }, [inView, navigate, state, nextPageUrl, hasNextPage]);
-  
     return nodes.map((product) => (
       <Link
         key={product.id}
-        className="recommended-product"
+        className="recommended-product hover:no-underline group"
         to={`/products/${product.handle}`}
       >
         <Image
@@ -90,13 +88,28 @@ export function RecommendedProducts ( ) {
           aspectRatio="1/1"
           sizes="(min-width: 45em) 20vw, 50vw"
         />
-        <h4>{product.title}</h4>
-        <small>
-          <Money data={product.priceRange.minVariantPrice} />
-        </small>
+        <h4 className='text-sm text-lime-950 m-0 mt-1 font-semibold leading-5 group-hover:text-lime-800 text-ellipsis overflow-hidden'>{product.title}</h4>
+        <CustomMoney product={product} withoutCurrency={false} />
       </Link>
     ));
   }
+
+  const CustomMoney = ({product, withoutCurrency = true}) => {
+    return (
+      <div>
+        <text className='text-lg m-0 text-lime-950 font-semibold slashed-zero proportional-nums group-hover:text-lime-700'>
+          <text className='text-xs m-0 relative top-0 right-0 h-16 w-16'>$</text>
+          <Money className='inline' data={product.priceRange.minVariantPrice} withoutCurrency={true}/>
+          {(withoutCurrency==false)?<small className='text-xs mx-1'>{product.priceRange.minVariantPrice.currencyCode}</small>:<></>}
+        </text>
+        { 
+        product.compareAtPriceRange!==undefined && product.compareAtPriceRange.maxVariantPrice!== undefined?
+            <text className='text-red-700 line-through group-hover:text-red-500 text-xs m-0 relative top-0 right-0 h-16 w-16'>${product.compareAtPriceRange.maxVariantPrice.amount}</text>
+        :<></>
+        }
+      </div>
+    )
+  };
 
 function FeaturedCollection() {
   const { featuredCollection } = useLoaderData();
@@ -109,17 +122,16 @@ function FeaturedCollection() {
       width: "400px"
     },
     collapsed: {
-      width: '200px'
+      width: '300px'
     }
   }
-  console.log(featuredCollection)
   if (!featuredCollection) return null;
   return (
     featuredCollection.map((collection, index) =>{
       return (
       <motion.div
             key={index}
-            className={`card cursor-pointer h-[300px] bg-cover bg-center rounded-[10px] ${index === expandedIndex ? 'expanded': ''}`}
+            className={`card cursor-pointer h-[200px] bg-cover bg-center rounded-[10px] ${index === expandedIndex ? 'expanded': ''}`}
             variants={cardVariants}
             initial="collapsed"
             animate={index === expandedIndex ? 'expanded': 'collapsed'}
@@ -139,16 +151,3 @@ function FeaturedCollection() {
     })
   );
 }
-
-
-                  /* <Link
-      className={`card cursor-pointer h-[500px] bg-cover bg-center rounded-[20px] ${index === expandedIndex ? 'expanded': ''}`}
-              to={`/collections/${collection.handle}`}
-            >
-              {collection?.image && (
-                <div className="w-full aspect-video">
-                  <Image data={collection?.image} />
-                </div>
-              )}
-              <text>{collection.title}</text>
-            </Link> */

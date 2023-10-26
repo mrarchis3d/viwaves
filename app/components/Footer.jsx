@@ -2,7 +2,7 @@ import {useMatches, NavLink} from '@remix-run/react';
 
 export function Footer({menu}) {
   return (
-    <footer className="footer">
+    <footer className="footer w-screen">
       <FooterMenu menu={menu} />
     </footer>
   );
@@ -11,6 +11,7 @@ export function Footer({menu}) {
 function FooterMenu({menu}) {
   const [root] = useMatches();
   const publicStoreDomain = root?.data?.publicStoreDomain;
+  console.log(menu)
   return (
     <nav className="footer-menu" role="navigation">
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
@@ -23,11 +24,12 @@ function FooterMenu({menu}) {
             : item.url;
         const isExternal = !url.startsWith('/');
         return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
+          <a className='hover:no-underline' href={url} key={item.id} rel="noopener noreferrer" target="_blank">
             {item.title}
           </a>
         ) : (
           <NavLink
+            className={'hover:no-underline'}
             end
             key={item.id}
             prefetch="intent"
