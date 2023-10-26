@@ -103,7 +103,7 @@ export function RecommendedProducts ( ) {
           {(withoutCurrency==false)?<small className='text-xs mx-1'>{product.priceRange.minVariantPrice.currencyCode}</small>:<></>}
         </text>
         { 
-        product.compareAtPriceRange!==undefined && product.compareAtPriceRange.maxVariantPrice!== undefined?
+        product.compareAtPriceRange!==undefined && product.compareAtPriceRange.maxVariantPrice!== undefined && product.compareAtPriceRange.maxVariantPrice.amount !== "0.0"?
             <text className='text-red-700 line-through group-hover:text-red-500 text-xs m-0 relative top-0 right-0 h-16 w-16'>${product.compareAtPriceRange.maxVariantPrice.amount}</text>
         :<></>
         }
