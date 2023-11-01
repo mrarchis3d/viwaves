@@ -17,7 +17,7 @@ export function Layout({cart, children = null, footer, header, isLoggedIn}) {
       <MobileMenuAside menu={header.menu} />
       <Header header={header} cart={cart} isLoggedIn={isLoggedIn} />
       <main>{children}</main>
-      
+{/*       
         <Suspense>     
           <Await resolve={footer}>
             {(footer) => (
@@ -26,7 +26,7 @@ export function Layout({cart, children = null, footer, header, isLoggedIn}) {
             </div>
             )}
           </Await>
-        </Suspense>
+        </Suspense> */}
       
     </>
   );
@@ -48,21 +48,19 @@ function CartAside({cart}) {
 
 function SearchAside() {
   return (
-    <Aside id="search-aside" heading="SEARCH">
+    <Aside id="search-aside" heading="">
       <div className="predictive-search">
-        <div className='my-2 text-left'>
-          <CloseAside/>
-        </div>
-        <PredictiveSearchForm>
+        <div className='m-2 ml-6 md:ml-4 text-left'>
+          <PredictiveSearchForm>
           {({fetchResults, inputRef}) => (
-            <div>
+            <div className='ml-3 mt-3'>
               <input
 
                 className='rounded-lg'
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Buscar"
+                placeholder="ej. brazalete color .."
                 ref={inputRef}
                 type="search"
               />
@@ -70,8 +68,9 @@ function SearchAside() {
               <button className='p-2 px-3 mx-5 bg-amber-500 text-lime-100 rounded-lg' type="submit">Buscar</button>
             </div>
           )}
-        </PredictiveSearchForm>
-        <PredictiveSearchResults />
+          </PredictiveSearchForm>
+          <PredictiveSearchResults />
+        </div>
       </div>
     </Aside>
   );

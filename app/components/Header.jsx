@@ -7,23 +7,25 @@ import { AiOutlineShoppingCart } from 'react-icons/ai';
 export function Header({header, isLoggedIn, cart}) {
   const {shop, menu} = header;
   return (
-    <header className="z-10 w-full sticky top-0 px-4 align-middle h-16 bg-gradient-to-r from-lime-400 to-green-500 flex drop-shadow-md content-center">
-      <div className='sm:w-40 w-20 my-auto origin-center'>
-        <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        {shop.brand.logo ?
-            <Image
-              alt={shop.name}
-              width={140}
-              data={shop.brand.logo.image}
-              loading="lazy"
-            />
-        : <strong>{shop.name}</strong>}
-        </NavLink>
+    <header className='sticky top-0'>
+      <div className="z-10 w-full  flex align-middle h-16 bg-gradient-to-r from-lime-400 to-green-500 drop-shadow-md content-center">
+        <div className='sm:w-40 w-20 my-auto ml-3'>
+          <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
+          {shop.brand.logo ?
+              <Image
+                alt={shop.name}
+                width={140}
+                data={shop.brand.logo.image}
+                loading="lazy"
+              />
+          : <strong>{shop.name}</strong>}
+          </NavLink>
+        </div>
+        <div className='my-auto'>
+          <HeaderMenu menu={menu} viewport="desktop" />
+        </div>
+        <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
       </div>
-      <div className='my-auto'>
-        <HeaderMenu menu={menu} viewport="desktop" />
-      </div>
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
     </header>
   );
 }

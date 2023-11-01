@@ -1,15 +1,12 @@
 import {Suspense} from 'react';
 import {defer, redirect} from '@shopify/remix-oxygen';
 import {Await, Link, useLoaderData} from '@remix-run/react';
-
-import {
-  Image,
-  Money,
-  VariantSelector,
-  getSelectedProductOptions,
-  CartForm,
-} from '@shopify/hydrogen';
+import { Image,VariantSelector,getSelectedProductOptions, CartForm} from '@shopify/hydrogen';
 import {getVariantUrl} from '~/utils';
+import { CustomMoney, CustomMoneyVariant } from '~/components/Utils/MoneyWithComparePrice';
+import { VARIANTS_QUERY, PRODUCT_QUERY, RELATED_PRODUCTS_QUERY} from '../graphql/queries/getProductAndVariations'
+
+
 
 export const meta = ({data}) => {
   return [{title: `Hydrogen | ${data.product.title}`}];
@@ -70,7 +67,14 @@ export async function loader({params, request, context}) {
     variables: {handle},
   });
 
-  return defer({product, variants});
+  const recommendedProducts = await storefront.query(RELATED_PRODUCTS_QUERY, {
+    variables: {
+      productId: product.id,
+      intent: "RELATED"
+    }
+  })
+
+  return defer({product, variants, recommendedProducts});
 }
 
 function redirectToFirstVariant({product, request}) {
@@ -91,16 +95,28 @@ function redirectToFirstVariant({product, request}) {
 }
 
 export default function Product() {
-  const {product, variants} = useLoaderData();
+  const {product, variants, recommendedProducts} = useLoaderData();
   const {selectedVariant} = product;
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <ProductMain
+    <div className="justify-center m-10">
+      <div className='m-2 grid grid-cols-1 md:grid-cols-2 gap-x-14'>
+        <ProductImage image={selectedVariant?.image} />
+        <ProductMain
         selectedVariant={selectedVariant}
         product={product}
         variants={variants}
       />
+        <div className='my-10'>
+          <ProductDescription product={product}/>
+          <div className='my-10'>
+            <strong className='text-xl mb-10 uppercase'>Productos relacionados</strong>
+          </div>
+            <div className='grid grid-cols-2 gap-5'>
+              <RecommendedProducts  products={recommendedProducts}></RecommendedProducts>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
@@ -110,22 +126,53 @@ function ProductImage({image}) {
     return <div className="product-image" />;
   }
   return (
-    <div className="product-image">
       <Image
+        className='rounded-xl'
         alt={image.altText || 'Product Image'}
         aspectRatio="1/1"
         data={image}
         key={image.id}
-        sizes="(min-width: 45em) 50vw, 100vw"
+        sizes="(min-width: 15em) 20vw, 40vw"
       />
-    </div>
   );
 }
 
+function RecommendedProducts ({products}){
+  return products.productRecommendations.map((product) => (
+    <Link
+      key={product.id}
+      className="recommended-product hover:no-underline group"
+      to={`/products/${product.handle}`}
+    >
+      <Image
+        data={product.images.nodes[0]}
+        aspectRatio="1/1"
+        sizes="(min-width: 45em) 20vw, 50vw"
+      />
+      <h4 className='text-sm text-lime-950 m-0 mt-1 font-semibold leading-5 group-hover:text-lime-800 text-ellipsis overflow-hidden'>{product.title}</h4>
+      <CustomMoney product={product} withoutCurrency={false} />
+    </Link>
+  ));
+}
+
+function ProductDescription({product}){
+  const {descriptionHtml} = product;
+  return(
+    <div>      
+      <p>
+        <strong className='text-xl'>DESCRIPCIÓN</strong>
+      </p>
+      <br />
+      <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+      <br />
+    </div>
+  )
+}
+
 function ProductMain({selectedVariant, product, variants}) {
-  const {title, descriptionHtml} = product;
+  const {title} = product;
   return (
-    <div className="product-main">
+    <div className="md:sticky top-10 self-start">
       <h1>{title}</h1>
       <ProductPrice selectedVariant={selectedVariant} />
       <br />
@@ -151,14 +198,6 @@ function ProductMain({selectedVariant, product, variants}) {
           )}
         </Await>
       </Suspense>
-      <br />
-      <br />
-      <p>
-        <strong>Description</strong>
-      </p>
-      <br />
-      <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-      <br />
     </div>
   );
 }
@@ -166,19 +205,14 @@ function ProductMain({selectedVariant, product, variants}) {
 function ProductPrice({selectedVariant}) {
   return (
     <div className="product-price">
-      {selectedVariant?.compareAtPrice ? (
+      {selectedVariant?.compareAtPrice && selectedVariant?.price &&  Number.parseInt(selectedVariant?.compareAtPrice.amount) > Number.parseInt(selectedVariant?.price.amount) ? (
         <>
-          <p>Sale</p>
+          <strong className='text-xl text-red-600'>¡Producto en Descuento!</strong>
           <br />
-          <div className="product-price-on-sale">
-            {selectedVariant ? <Money data={selectedVariant.price} /> : null}
-            <s>
-              <Money data={selectedVariant.compareAtPrice} />
-            </s>
-          </div>
+          <CustomMoneyVariant product={selectedVariant} withoutCurrency={false}></CustomMoneyVariant>
         </>
       ) : (
-        selectedVariant?.price && <Money data={selectedVariant?.price} />
+        selectedVariant?.price && <CustomMoney product={selectedVariant} />
       )}
     </div>
   );
@@ -269,105 +303,3 @@ function AddToCartButton({analytics, children, disabled, lines, onClick}) {
   );
 }
 
-const PRODUCT_VARIANT_FRAGMENT = `#graphql
-  fragment ProductVariant on ProductVariant {
-    availableForSale
-    compareAtPrice {
-      amount
-      currencyCode
-    }
-    id
-    image {
-      __typename
-      id
-      url
-      altText
-      width
-      height
-    }
-    price {
-      amount
-      currencyCode
-    }
-    product {
-      title
-      handle
-    }
-    selectedOptions {
-      name
-      value
-    }
-    sku
-    title
-    unitPrice {
-      amount
-      currencyCode
-    }
-  }
-`;
-
-const PRODUCT_FRAGMENT = `#graphql
-  fragment Product on Product {
-    id
-    title
-    vendor
-    handle
-    descriptionHtml
-    description
-    options {
-      name
-      values
-    }
-    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
-      ...ProductVariant
-    }
-    variants(first: 1) {
-      nodes {
-        ...ProductVariant
-      }
-    }
-    seo {
-      description
-      title
-    }
-  }
-  ${PRODUCT_VARIANT_FRAGMENT}
-`;
-
-const PRODUCT_QUERY = `#graphql
-  query Product(
-    $country: CountryCode
-    $handle: String!
-    $language: LanguageCode
-    $selectedOptions: [SelectedOptionInput!]!
-  ) @inContext(country: $country, language: $language) {
-    product(handle: $handle) {
-      ...Product
-    }
-  }
-  ${PRODUCT_FRAGMENT}
-`;
-
-const PRODUCT_VARIANTS_FRAGMENT = `#graphql
-  fragment ProductVariants on Product {
-    variants(first: 250) {
-      nodes {
-        ...ProductVariant
-      }
-    }
-  }
-  ${PRODUCT_VARIANT_FRAGMENT}
-`;
-
-const VARIANTS_QUERY = `#graphql
-  ${PRODUCT_VARIANTS_FRAGMENT}
-  query ProductVariants(
-    $country: CountryCode
-    $language: LanguageCode
-    $handle: String!
-  ) @inContext(country: $country, language: $language) {
-    product(handle: $handle) {
-      ...ProductVariants
-    }
-  }
-`;
