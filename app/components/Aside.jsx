@@ -34,7 +34,7 @@ export function CloseAside() {
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <a className="inline hover:no-underline group" href="#" onChange={() => history.go(-1)}>
-      <text className='text-sm mx-2 inline text-lime-900 group-hover:text-amber-700'> <IoExitOutline className='inline mx-2'/>Volver</text>
+      <text className=' mx-2 inline text-red-700 group-hover:text-amber-700'> <IoExitOutline className='inline mx-2 text-xl'/>Volver</text>
     </a>
   );
 }

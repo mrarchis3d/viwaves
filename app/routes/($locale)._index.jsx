@@ -104,10 +104,10 @@ function FeaturedCollection() {
   }
   const cardVariants = {
     expanded: {
-      width: "400px"
+      width: "375px"
     },
     collapsed: {
-      width: '300px'
+      width: '275px'
     }
   }
   if (!featuredCollection) return null;

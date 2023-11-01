@@ -236,7 +236,7 @@ export function PredictiveSearchResults() {
     return <NoPredictiveSearchResults searchTerm={searchTerm} />;
   }
   return (
-    <div className="predictive-search-results">
+    <div className="predictive-search-results ml-4">
       <div>
         {results.map(({type, items}) => (
           <PredictiveSearchResult
@@ -252,7 +252,7 @@ export function PredictiveSearchResults() {
       {searchTerm.current && (
         <Link onClick={goToSearchResult} to={`/search?q=${searchTerm.current}`}>
           <p>
-            View all results for <q>{searchTerm.current}</q>
+            Ver todos los resultados filtrado por: <q>{searchTerm.current}</q>
             &nbsp; →
           </p>
         </Link>
@@ -283,7 +283,7 @@ function PredictiveSearchResult({goToSearchResult, items, searchTerm, type}) {
       <Link prefetch="intent" to={categoryUrl} onClick={goToSearchResult}>
         <h5>{isSuggestions ? 'Suggestions' : type}</h5>
       </Link>
-      <ul>
+      <ul className='ml-3'>
         {items.map((item) => (
           <SearchResultItem
             goToSearchResult={goToSearchResult}
@@ -297,6 +297,7 @@ function PredictiveSearchResult({goToSearchResult, items, searchTerm, type}) {
 }
 
 function SearchResultItem({goToSearchResult, item}) {
+  console.log(item)
   return (
     <li className="predictive-search-result-item" key={item.id}>
       <Link onClick={goToSearchResult} to={item.url}>
