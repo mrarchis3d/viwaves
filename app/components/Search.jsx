@@ -1,6 +1,7 @@
 import {Link, Form, useParams, useFetcher, useFetchers} from '@remix-run/react';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import React, {useRef, useEffect} from 'react';
+import { CustomMoney } from './Utils/MoneyWithComparePrice';
 
 export const NO_PREDICTIVE_SEARCH_RESULTS = [
   {type: 'queries', items: []},
@@ -95,7 +96,7 @@ export function SearchResults({results}) {
 function SearchResultsProductsGrid({products}) {
   return (
     <div className="search-result">
-      <h3>Products</h3>
+      <h3>Productos</h3>
       <Pagination connection={products}>
         {({nodes, isLoading, NextLink, PreviousLink}) => {
           const itemsMarkup = nodes.map((product) => (
@@ -223,7 +224,6 @@ export function PredictiveSearchForm({
 export function PredictiveSearchResults() {
   const {results, totalResults, searchInputRef, searchTerm} =
     usePredictiveSearch();
-
   function goToSearchResult(event) {
     if (!searchInputRef.current) return;
     searchInputRef.current.blur();
@@ -267,7 +267,7 @@ function NoPredictiveSearchResults({searchTerm}) {
   }
   return (
     <p>
-      No results found for <q>{searchTerm.current}</q>
+      No se encontró resultados para: <q>{searchTerm.current}</q>
     </p>
   );
 }
@@ -318,11 +318,7 @@ function SearchResultItem({goToSearchResult, item}) {
           ) : (
             <span>{item.title}</span>
           )}
-          {item?.price && (
-            <small>
-              <Money data={item.price} />
-            </small>
-          )}
+          <CustomMoney product = {item} withoutCurrency={false}/>
         </div>
       </Link>
     </li>

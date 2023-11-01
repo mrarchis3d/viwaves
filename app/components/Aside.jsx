@@ -1,3 +1,4 @@
+import { IoExitOutline } from 'react-icons/io5';
 /**
  * A side bar component with Overlay that works without JavaScript.
  * @example
@@ -29,11 +30,11 @@ export function Aside({children, heading, id = 'aside'}) {
   );
 }
 
-function CloseAside() {
+export function CloseAside() {
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
-    <a className="close" href="#" onChange={() => history.go(-1)}>
-      &times;
+    <a className="inline hover:no-underline group" href="#" onChange={() => history.go(-1)}>
+      <text className='text-sm mx-2 inline text-lime-900 group-hover:text-amber-700'> <IoExitOutline className='inline mx-2'/>Volver</text>
     </a>
   );
 }

@@ -54,7 +54,6 @@ async function fetchPredictiveSearchResults({params, request, context}) {
       searchTypes,
     };
   }
-
   const data = await context.storefront.query(PREDICTIVE_SEARCH_QUERY, {
     variables: {
       limit,
@@ -139,7 +138,8 @@ export function normalizePredictiveSearchResults(predictiveSearch, locale) {
           image: product.variants?.nodes?.[0]?.image,
           title: product.title,
           url: `${localePrefix}/products/${product.handle}${trackingParams}`,
-          price: product.variants.nodes[0].price,
+          priceRange: product.priceRange,
+          compareAtPriceRange: product.compareAtPriceRange
         };
       }),
     });
@@ -242,6 +242,18 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
     title
     handle
     trackingParameters
+    priceRange{
+      minVariantPrice{
+        amount
+        currencyCode
+      }
+    }
+    compareAtPriceRange{
+      maxVariantPrice{
+        amount
+      	currencyCode
+      }
+    }
     variants(first: 1) {
       nodes {
         id
@@ -251,12 +263,8 @@ const PREDICTIVE_SEARCH_QUERY = `#graphql
           width
           height
         }
-        price {
-          amount
-          currencyCode
-        }
       }
-    }
+    }   
   }
   fragment PredictiveQuery on SearchQuerySuggestion {
     __typename

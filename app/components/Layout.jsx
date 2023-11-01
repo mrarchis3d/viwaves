@@ -1,6 +1,6 @@
 import {Await} from '@remix-run/react';
 import {Suspense} from 'react';
-import {Aside} from '~/components/Aside';
+import {Aside, CloseAside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/Cart';
@@ -50,20 +50,24 @@ function SearchAside() {
   return (
     <Aside id="search-aside" heading="SEARCH">
       <div className="predictive-search">
-        <br />
+        <div className='my-2 text-left'>
+          <CloseAside/>
+        </div>
         <PredictiveSearchForm>
           {({fetchResults, inputRef}) => (
             <div>
               <input
+
+                className='rounded-lg'
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder="Buscar"
                 ref={inputRef}
                 type="search"
               />
               &nbsp;
-              <button type="submit">Search</button>
+              <button className='p-2 px-3 mx-5 bg-amber-500 text-lime-100 rounded-lg' type="submit">Buscar</button>
             </div>
           )}
         </PredictiveSearchForm>
