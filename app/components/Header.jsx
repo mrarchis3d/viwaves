@@ -7,7 +7,7 @@ import { AiOutlineShoppingCart } from 'react-icons/ai';
 export function Header({header, isLoggedIn, cart}) {
   const {shop, menu} = header;
   return (
-    <header className='sticky top-0'>
+    <header className='sticky top-0 z-50'>
       <div className="z-10 w-full  flex align-middle h-16 bg-gradient-to-r from-lime-400 to-green-500 drop-shadow-md content-center">
         <div className='sm:w-40 w-20 my-auto ml-3'>
           <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>

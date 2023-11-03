@@ -419,3 +419,12 @@ aside li {
 .account-logout {
   display: inline-block;
 }
+
+
+.swiper {
+  display: flex;
+}
+
+.swiper-wrapper {
+  display: flex;
+}

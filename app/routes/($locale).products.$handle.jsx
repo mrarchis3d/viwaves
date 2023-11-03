@@ -1,12 +1,16 @@
 import {Suspense} from 'react';
+import React, { useRef, useState } from 'react';
 import {defer, redirect} from '@shopify/remix-oxygen';
 import {Await, Link, useLoaderData} from '@remix-run/react';
-import { Image,VariantSelector,getSelectedProductOptions, CartForm} from '@shopify/hydrogen';
+import { Image,VariantSelector,getSelectedProductOptions, CartForm, Pagination} from '@shopify/hydrogen';
 import {getVariantUrl} from '~/utils';
 import { CustomMoney, CustomMoneyVariant } from '~/components/Utils/MoneyWithComparePrice';
 import { VARIANTS_QUERY, PRODUCT_QUERY, RELATED_PRODUCTS_QUERY} from '../graphql/queries/getProductAndVariations'
-
-
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination as PaginationSwipper,Scrollbar, A11y } from 'swiper/modules';
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 export const meta = ({data}) => {
   return [{title: `Hydrogen | ${data.product.title}`}];
@@ -47,7 +51,6 @@ export async function loader({params, request, context}) {
       (option) => option.name === 'Title' && option.value === 'Default Title',
     ),
   );
-
   if (firstVariantIsDefault) {
     product.selectedVariant = firstVariant;
   } else {
@@ -98,9 +101,29 @@ export default function Product() {
   const {product, variants, recommendedProducts} = useLoaderData();
   const {selectedVariant} = product;
   return (
-    <div className="justify-center m-10">
-      <div className='m-2 grid grid-cols-1 md:grid-cols-2 gap-x-14'>
-        <ProductImage image={selectedVariant?.image} />
+    <div className="justify-center mx-10 md:m-10">
+      <div className='md:m-2 grid grid-cols-1 md:grid-cols-2 gap-x-14'>
+        <div>
+          <button class="custom_next">Custom Next Btn</button>
+          <button class="custom_prev">Custom Next Btn</button>
+          <Swiper
+            modules={[Navigation, PaginationSwipper, A11y]}
+            slidesPerView={1}
+            navigation={{
+              nextEl: ".custom_next",
+              prevEl: ".custom_prev"
+            }}
+            pagination={{ clickable: true }}
+            className='flex overflow-hidden z-0 w-9/12 md:w-7/12 m-auto'
+          >
+            { product.images.nodes.map((image)=>(
+              <SwiperSlide key={image.id} className='justify-center items-center '>
+                <ProductImage image={image}/>
+              </SwiperSlide>))
+            }
+          </Swiper>
+        </div>
+        
         <ProductMain
         selectedVariant={selectedVariant}
         product={product}
@@ -126,14 +149,13 @@ function ProductImage({image}) {
     return <div className="product-image" />;
   }
   return (
-      <Image
-        className='rounded-xl'
-        alt={image.altText || 'Product Image'}
-        aspectRatio="1/1"
-        data={image}
-        key={image.id}
-        sizes="(min-width: 15em) 20vw, 40vw"
-      />
+    <Image
+    alt={image.altText || 'Product Image'}
+    aspectRatio="1/1"
+    data={image}
+    key={image.id}
+    sizes="(min-width: 15em) 100vw, 100vw"
+  />
   );
 }
 
@@ -172,10 +194,9 @@ function ProductDescription({product}){
 function ProductMain({selectedVariant, product, variants}) {
   const {title} = product;
   return (
-    <div className="md:sticky top-10 self-start">
-      <h1>{title}</h1>
+    <div className="md:sticky md:top-10 self-start">
+      <h1 className='my-0 md:my-2'>{title}</h1>
       <ProductPrice selectedVariant={selectedVariant} />
-      <br />
       <Suspense
         fallback={
           <ProductForm

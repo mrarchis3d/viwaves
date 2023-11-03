@@ -297,7 +297,6 @@ function PredictiveSearchResult({goToSearchResult, items, searchTerm, type}) {
 }
 
 function SearchResultItem({goToSearchResult, item}) {
-  console.log(item)
   return (
     <li className="predictive-search-result-item" key={item.id}>
       <Link onClick={goToSearchResult} to={item.url}>
